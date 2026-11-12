@@ -17,11 +17,20 @@ class FraisController extends Controller
     }
     public function addFrais()
     {
-        return view('formFrais');
+        $frais = new Frais();
+        $frais->anneemois=date("Y-m");
+        return view('formFrais', compact('frais'));
     }
     public function validFrais(Request $request)
     {
-        $frais = new Frais();
+        $id = $request->input('id');
+        if ($id) {
+            $services = new FraisService();
+            $frais = $services->getFrais($id);
+        } else {
+            $frais = new Frais();
+        }
+
         $frais->id_visiteur = session('id_visiteur');
         $frais->anneemois = $request->input('mois');
         $frais->nbjustificatifs = $request->input('nbjustif');
@@ -33,5 +42,11 @@ class FraisController extends Controller
         $services->saveFrais($frais);
 
         return redirect('/listerFrais');
+    }
+    public function editFrais($id)
+    {
+        $services = new FraisService();
+        $frais = $services->getFrais($id);
+        return view('formFrais', compact('frais'));
     }
 }
