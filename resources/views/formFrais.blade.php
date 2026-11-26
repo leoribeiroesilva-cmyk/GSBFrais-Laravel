@@ -7,15 +7,15 @@
         <h1>@if($frais->id_frais) Modification @else Ajout @endif Fiche de frais</h1>
         <div class="col-md-12 card card-body bg-light">
             <div class="form-group">
-                <label class="col-md-3">Identifiant :</label>
+                <label class="col-md-3" >Identifiant :</label>
                 <div class="col-md-6">
-                    <input type="hidden" name="id" value="{{ $frais->id_frais }}">
+                    <input type="hidden" name="id" value="{{ $frais->id_frais }}" required>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-md-3">Mois :</label>
                 <div class="col-md-6">
-                    <input type="text" name="mois" value="{{ $frais->anneemois }}" required>
+                    <input type="text" name="mois" value="{{ $frais->anneemois }}" >
                 </div>
             </div>
             <div class="form-group">
@@ -43,7 +43,13 @@
             <div class="form-group">
                 <label class="col-md-3">Etat</label>
                 <div class="col-md-6">
-                    <input type="number" name="etat" value="{{ $frais->id_etat }}" required>
+                    <input type="number" name="etat" class="form-control" min="1" max="4" value="{{ $frais->id_etat }}" required>
+                    @foreach($etats as $etat)
+                        <option value="1">{{ $etat->lib_etat }}</option>
+                        <option value="2">{{ $etat->lib_etat }}</option>
+                        <option value="3">{{ $etat->lib_etat }}</option>
+                        <option value="4">{{ $etat->lib_etat }}</option>
+                    @endforeach
                 </div>
             </div>
             <div class="form-group">

@@ -9,11 +9,10 @@ class UserException extends Exception
 
     public function __construct($userMessage, $message="", $code=0)
     {
-        parent::__construct($message);
+        parent::__construct($message, $code);
         $this->userMessage = $userMessage;
-        $this->code = $code;
     }
-    public function getUserMessage(){
+    public function getUserMessage() {
         return $this->userMessage;
     }
 }
