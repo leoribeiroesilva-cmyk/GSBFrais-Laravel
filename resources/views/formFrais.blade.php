@@ -24,7 +24,7 @@
                     <input type="number" name="montantsaisi" value="" disabled>
                 </div>
                 <div class="col-md-6 col-md-offset-3">
-                    <a href="" class="btn btn-info @if(!$frais->id_frais) disabled @endif"> Frais hors forfait</a>
+                    <a href="{{ url('/listerFraisHF/'.$frais->id_frais) }}" class="btn btn-info @if(!$frais->id_frais) disabled @endif"> Frais hors forfait</a>
                     <a href="" class="btn btn-info @if(!$frais->id_frais) disabled @endif"> Frais au forfait</a>
                 </div>
             </div>
