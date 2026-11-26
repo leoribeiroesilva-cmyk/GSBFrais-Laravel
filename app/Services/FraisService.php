@@ -11,7 +11,12 @@ class FraisService
 {
     public function getListFrais($id_visiteur){
         try {
-            $liste = Frais::query()->where('id_visiteur', '=', $id_visiteur)->get();
+            $liste = Frais::query()
+                ->select('frais.*', 'etat.lib_etat')
+                ->join('etat', 'etat.id_etat', '=', 'frais.id_etat')
+                ->where('id_visiteur', '=', $id_visiteur)
+                ->orderBy('frais.datemodification', 'DESC')
+                ->get();
             return $liste;
         } catch (QueryException $exception) {
             $userMessage="Erreur d'accès à la base de données";
@@ -48,7 +53,20 @@ class FraisService
             $liste = Etat::query()->get();
             return $liste;
         } catch (QueryException $exception) {
-            $userMessage="Erreur d'accès aux Etats a la base de données";
+            $userMessage="Erreur d'accès aux Etats à la base de données";
+            throw new UserException($userMessage, $exception->getMessage(), $exception->getCode());
+        }
+    }
+    public function deleteFrais($id){
+        try {
+            $frais = Frais::query()->find($id);
+            $frais->delete();
+        } catch (QueryException $exception) {
+            if ($exception->getCode() == 23000) {
+                $userMessage = "Impossible de supprimer une fiche avec les frais saisis";
+            } else {
+                $userMessage = "Erreur de suppréssion à la base de données";
+            }
             throw new UserException($userMessage, $exception->getMessage(), $exception->getCode());
         }
     }

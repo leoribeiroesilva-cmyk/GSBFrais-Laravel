@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Etat;
 use App\Models\Frais;
 use App\Services\FraisService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 
 class FraisController extends Controller
@@ -26,8 +28,8 @@ class FraisController extends Controller
         try {
             $frais = new Frais();
             $frais->anneemois = date("Y-m");
-            $services = new FraisService();
-            $etats = $services->getListEtats();
+            $etats = [new Etat()];
+            $etats[0]->lib_etat = "Création en cours";
             return view('formFrais', compact('frais','etats'));
         }catch (Exception $exception){
             return view('error', compact('exception'));
@@ -41,15 +43,17 @@ class FraisController extends Controller
             if ($id) {
                 $services = new FraisService();
                 $frais = $services->getFrais($id);
+                $frais->id_etat = $request->input('etat');
             } else {
                 $frais = new Frais();
+                $frais->id_etat = 2;
             }
 
             $frais->id_visiteur = session('id_visiteur');
             $frais->anneemois = $request->input('mois');
+            $frais->titre = $request->input('titre');
             $frais->nbjustificatifs = $request->input('nbjustif');
             $frais->montantvalide = $request->input('valide');
-            $frais->id_etat = $request->input('etat');
             $frais->datemodification = date("y-m-d");
 
             $services = new FraisService();
@@ -66,9 +70,27 @@ class FraisController extends Controller
             $services = new FraisService();
             $frais = $services->getFrais($id);
             $etats = $services->getListEtats();
-            return view('formFrais', compact('frais', 'etats'));
+            $erreur = Session::get('erreur');
+            Session::remove('erreur');
+            return view('formFrais', compact('frais', 'etats', 'erreur'));
         } catch (Exception $exception){
+
             return view('error', compact('exception'));
+        }
+    }
+    public function removeFrais($id)
+    {
+        try {
+            $service = new FraisService();
+            $service->deleteFrais($id);
+            return redirect('/listerFrais');
+        } catch (Exception $exception) {
+            if ($exception->getCode() == '23000') {
+                Session::put('erreur', $exception->getUserMessage());
+                return redirect(url('/editerFrais/'.$id));
+            } else {
+                return view('error', compact('exception'));
+            }
         }
     }
 }
